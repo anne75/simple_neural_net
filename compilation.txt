@@ -1,1 +1,0 @@
-g++ exercise4-1.cpp -lnlopt -larmadillo
