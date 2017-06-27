@@ -9,5 +9,30 @@ CC = g++
 EXE = mnist
 
 # list of source files
-g++ neural_network.cpp neural_wrap.cpp mnist_nn.cpp read_mnist.cpp -lnlopt -larmadillo
+SRCS = neural_network.cpp mnist_nn.cpp read_mnist.cpp
 
+# list of libraries
+LIBS = -lnlopt -larmadillo
+
+# headers
+HDRS = neural_network.h
+
+# automatically generated list of object files
+OBJS = $(SRCS:.c=.o)
+
+# Do not mistake rules for files
+.PHONY: clean all re
+
+# default target
+all: $(OBJS) $(HDRS) Makefile
+	$(CC) -o $(EXE) $(OBJS) $(LIBS)
+
+# dependencies
+$(OBJS): $(HDRS) Makefile
+
+# housekeeping
+clean:
+	-$(RM) $(OBJS) $(EXE) *~
+
+re:
+	clean all
