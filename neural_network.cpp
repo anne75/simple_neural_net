@@ -5,8 +5,11 @@ using namespace arma;
 
 
 /**
- * randomly initialize the weights of a layer with L_in incoming
- * connections and L_out outgoing connections
+ * randInitializeWeights - randomly initialize the weights of a layer with L_in
+ * incoming connections and L_out outgoing connections
+ * @L_in: number of incomming connections (number columns)
+ * @L_out: number of outgoing connections (number rows)
+ * Return: a matrix with innitialized random weights
  */
 arma::mat randInitializeWeights(unsigned L_in, unsigned L_out)
 {
@@ -16,11 +19,73 @@ arma::mat randInitializeWeights(unsigned L_in, unsigned L_out)
 	return W;
 }
 
+/**
+ * train_nn - train a simple neural network with 1 hidden layer
+ * @essai: struct containing all parameters needed
+ * Return: matrixes theta1 and theta2 to make predictions
+ */
+field<mat> train_nn(nn *essai)
+{
+	field<mat> F(2);
+
+	/* initialize the weigths */
+        /*input layer, hidden layer*/
+	mat theta1 = randInitializeWeights(
+		essai->input_layer_size, essai->hidden_layer_size);
+	/*hidden layer, output layer*/
+	mat theta2 = randInitializeWeights(
+		essai->hidden_layer_size, essai->num_labels);
+
+        /* unroll parameters, convert to thetas vector<double> to use nlopt */
+	vector<double> initial_nn_params = conv_to< vector<double> >::from(
+		join_vert(vectorise(theta1), vectorise(theta2)));
+	int tt = initial_nn_params.size();
+
+        /*initialize optimizer*/
+	nlopt::opt opt(nlopt::LD_LBFGS, initial_nn_params.size());
+	opt.set_min_objective(costFunction, essai);
+	opt.set_maxeval(essai->max_iter);
+	double minf = 0;
+	nlopt::result res = opt.optimize(initial_nn_params, minf);
+
+        /*get the optimized parameters*/
+	cout<<"Cost after optimization: "<< minf << endl;
+	colvec params = conv_to< mat >::from(initial_nn_params);
+	theta1 = params.rows(0, (essai->hidden_layer_size) *
+			     ((essai->input_layer_size) + 1));
+	theta1.reshape((essai->hidden_layer_size),
+		       (essai->input_layer_size) + 1);
+	cout << "optimized theta1 " << theta1.n_rows << endl;
+	theta2 = params.rows((essai->hidden_layer_size) *
+			     ((essai->input_layer_size) + 1),
+			     params.n_rows - 1);
+	theta2.reshape(essai->num_labels, essai->hidden_layer_size + 1);
+
+	F[0] = theta1;
+	F[1] = theta2;
+	return (F);
+}
+
+/**
+ * sigmoid - sigmoid function
+ * @z: matrix on which to apply per element function
+ * Return: matrix where each element is the result of sigmoid(matching
+ * initial element)
+ */
 arma::mat sigmoid(mat &z)
 {
 	return (1.0 / (1.0 + exp(-z)));
 }
 
+/**
+ * costFunction - function to minimize
+ * @nn_params: the parameters theta1 and theta2 to optimize
+ * @grad: the cost to minimize
+ * @data: any additional parameter - here a nn struct
+ * The prototype of this function is determined
+ * by the nlopt library
+ * Return: cost
+ */
 double costFunction(const std::vector<double> &nn_params,
 		    std::vector<double> &grad, void* data)
 {
@@ -45,7 +110,7 @@ double costFunction(const std::vector<double> &nn_params,
 	//mat y = ((mat *)data)[1];
 	mat X = *(essai->A);
 	mat y = *(essai->B);
-	
+
 	unsigned x_rows = X.n_rows;
 
 	/*feed forward*/
@@ -113,6 +178,13 @@ double costFunction(const std::vector<double> &nn_params,
 	return (J);
 }
 
+/**
+ * predict - make a prediction
+ * @theta1: first set of optimized parameters
+ * @theta2: second set of optimized parameters
+ * @test: matrix used to make a prediction
+ * Return: a vector of labels
+ */
 ucolvec predict(mat &theta1, mat &theta2, mat &test)
 {
 	test.insert_cols(0, ones<mat>(test.n_rows, 1));
