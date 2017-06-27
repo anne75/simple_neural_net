@@ -106,8 +106,6 @@ double costFunction(const std::vector<double> &nn_params,
 		       essai->hidden_layer_size + 1);
 
 	/*extract training set*/
-	//mat X = ((mat *)data)[0];
-	//mat y = ((mat *)data)[1];
 	mat X = *(essai->A);
 	mat y = *(essai->B);
 
@@ -141,7 +139,7 @@ double costFunction(const std::vector<double> &nn_params,
 						  )));
 	cout << "cost: " << J << endl;
 
-	/*backpropagation, I do not use a loop*/
+	/*backpropagation*/
 	mat theta1_grad = zeros<mat>(theta1.n_rows, theta1.n_cols);
 	mat theta2_grad = zeros<mat>(theta2.n_rows, theta2.n_cols);
 	mat delta3 = a3 - Y.t();
@@ -149,11 +147,7 @@ double costFunction(const std::vector<double> &nn_params,
 	delta2.shed_row(0);
 	theta1_grad = theta1_grad + delta2 * X.t();
 	theta2_grad = theta2_grad + delta3 * (a2.t());
-	//cout << "value" << endl;
-	//cout << delta3 << "delta3" << endl;
-	//cout << a2 << "a2" << endl;
-	//cout << delta3 * a2.t() << endl;
-	//cout << theta2_grad << endl;
+
 	/*add regularisation*/
 	theta1_grad = (1.0 / x_rows) * theta1_grad +
 		((essai->lambda) / x_rows) * theta1;
