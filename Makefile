@@ -25,14 +25,14 @@ OBJS = $(SRCS:.c=.o)
 
 # default target
 all: $(OBJS) $(HDRS) Makefile
-	$(CC) -o $(EXE) $(OBJS) $(LIBS)
+	$(CC) -O3 -o $(EXE) $(OBJS) $(LIBS)
 
 # dependencies
 $(OBJS): $(HDRS) Makefile
 
 # housekeeping
 clean:
-	-$(RM) $(OBJS) $(EXE) *~
+	-$(RM) *.o $(EXE) *~
 
 re:
 	clean all

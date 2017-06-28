@@ -39,13 +39,10 @@ void read_Mnist(string filename, arma::mat &vec)
 		magic_number = ReverseInt(magic_number);
 		file.read((char*) &number_of_images,sizeof(number_of_images));
 		number_of_images = ReverseInt(number_of_images);
-		cout << "number of images " << number_of_images << endl;
 		file.read((char*) &n_rows, sizeof(n_rows));
 		n_rows = ReverseInt(n_rows);
-		cout << "rows " << n_rows << endl;
 		file.read((char*) &n_cols, sizeof(n_cols));
 		n_cols = ReverseInt(n_cols);
-		cout << "col " << n_cols << endl;
 		for(int i = 0; i < number_of_images; ++i)
 		{
 			for(int r = 0; r < n_rows; ++r)

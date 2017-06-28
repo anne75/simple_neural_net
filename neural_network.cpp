@@ -14,8 +14,8 @@ using namespace arma;
 arma::mat randInitializeWeights(unsigned L_in, unsigned L_out)
 {
 	double epsilon_init = 0.12;
-	arma::mat W = arma::zeros<arma::mat>(L_out, 1 + L_in);
-	W = randu(L_out, 1 + L_in) * 2 * epsilon_init - epsilon_init;
+	//arma::mat W = arma::zeros<arma::mat>(L_out, 1 + L_in);
+	mat W = randu(L_out, 1 + L_in) * 2 * epsilon_init - epsilon_init;
 	return W;
 }
 
@@ -55,7 +55,6 @@ field<mat> train_nn(nn *essai)
 			     ((essai->input_layer_size) + 1));
 	theta1.reshape((essai->hidden_layer_size),
 		       (essai->input_layer_size) + 1);
-	cout << "optimized theta1 " << theta1.n_rows << endl;
 	theta2 = params.rows((essai->hidden_layer_size) *
 			     ((essai->input_layer_size) + 1),
 			     params.n_rows - 1);
@@ -137,7 +136,7 @@ double costFunction(const std::vector<double> &nn_params,
 		(accu(square(theta1.cols(1, theta1.n_cols-1)))
 				   + accu(square(theta2.cols(1, theta2.n_cols-1)
 						  )));
-	cout << "cost: " << J << endl;
+	//cout << "cost: " << J << endl;
 
 	/*backpropagation*/
 	mat theta1_grad = zeros<mat>(theta1.n_rows, theta1.n_cols);
@@ -189,7 +188,6 @@ ucolvec predict(mat &theta1, mat &theta2, mat &test)
 
 	mat a3 = theta2 * a2;
 	a3 = sigmoid(a3);
-	cout << "raw results " << a3 << endl;
 	ucolvec result = index_max(a3.t(), 1);
 	return (result);
 }
