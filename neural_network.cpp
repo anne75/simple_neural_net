@@ -9,12 +9,11 @@ using namespace arma;
  * incoming connections and L_out outgoing connections
  * @L_in: number of incomming connections (number columns)
  * @L_out: number of outgoing connections (number rows)
- * Return: a matrix with innitialized random weights
+ * Return: a matrix with initialized random weights
  */
 arma::mat randInitializeWeights(unsigned L_in, unsigned L_out)
 {
 	double epsilon_init = 0.12;
-	//arma::mat W = arma::zeros<arma::mat>(L_out, 1 + L_in);
 	mat W = randu(L_out, 1 + L_in) * 2 * epsilon_init - epsilon_init;
 	return W;
 }
@@ -35,7 +34,6 @@ field<mat> train_nn(nn *essai)
 	/*hidden layer, output layer*/
 	mat theta2 = randInitializeWeights(
 		essai->hidden_layer_size, essai->num_labels);
-
         /* unroll parameters, convert to thetas vector<double> to use nlopt */
 	vector<double> initial_nn_params = conv_to< vector<double> >::from(
 		join_vert(vectorise(theta1), vectorise(theta2)));
@@ -49,7 +47,7 @@ field<mat> train_nn(nn *essai)
 	nlopt::result res = opt.optimize(initial_nn_params, minf);
 
         /*get the optimized parameters*/
-	cout<<"Cost after optimization: "<< minf << endl;
+	//cout<<"Cost after optimization: "<< minf << endl;
 	colvec params = conv_to< mat >::from(initial_nn_params);
 	theta1 = params.rows(0, (essai->hidden_layer_size) *
 			     ((essai->input_layer_size) + 1));
@@ -107,7 +105,6 @@ double costFunction(const std::vector<double> &nn_params,
 	/*extract training set*/
 	mat X = *(essai->A);
 	mat y = *(essai->B);
-
 	unsigned x_rows = X.n_rows;
 
 	/*feed forward*/
