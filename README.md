@@ -11,12 +11,12 @@ the course neural network but this time in C++.
 Why C++ ? Mostly to learn a new language, and I had heard it had great linear algebra libraries.
 Here is my attempt.  
 
-In the folder, the class assignment as I did it 3 years ago.  
+The ```mlclass``` folder contains the class assignment as I did it 3 years ago in Octave.   
 Some files:  
-- ```make_training_sample.cpp```: from Dave Miller as well, how to make an `XOR` gate to test the neural network.  
+- ```make_training_sample.cpp```: from [Dave Miller](http://millermattson.com/dave), how to make an `XOR` gate to test the neural network.  
 - ```mnist_nn.cpp```: the entry point for the neural network.  
 - ```neural_network.cpp```: all the neural network related functions.   
-- ```neural_netowrk_training.cpp```: another neural network from [Dave Miller](http://millermattson.com/dave).  
+- ```neural_netowrk_training.cpp```: another neural network from Dave Miller as well.  
 - ```read_mnist.cpp```: adapted from this [post](http://eric-yuan.me/cpp-read-mnist/)   
 _____
 ### To use
