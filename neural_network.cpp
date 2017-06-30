@@ -14,6 +14,7 @@ using namespace arma;
 arma::mat randInitializeWeights(unsigned L_in, unsigned L_out)
 {
 	double epsilon_init = 0.12;
+	arma_rng::set_seed_random();
 	mat W = randu(L_out, 1 + L_in) * 2 * epsilon_init - epsilon_init;
 	return W;
 }

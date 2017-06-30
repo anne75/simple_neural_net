@@ -9,8 +9,7 @@ int main() {
 	int number_of_images = 60000;
 	int image_size = 28 * 28;
 	nn essai;
-	int i, count, count_train, train_sample, test_sample, max_iter;
-	double lambda;
+	int i, count, count_train, train_sample, test_sample, h_l_s, j;
 
 	//read MNIST image into Armadillo mat
 	arma::mat X(number_of_images, image_size);
@@ -27,22 +26,21 @@ int main() {
 	essai.A = &trainX;
 	essai.B = &trainy;
 	essai.input_layer_size = image_size;
-	essai.hidden_layer_size = 25;
 	essai.num_labels = 10;
+	essai.lambda = 9.8;
+	essai.max_iter = 200;
 
 	test_sample = 500;
-	for (lambda = 0; lambda < 11; lambda += 0.1)
+	for (h_l_s = 225; h_l_s <= 400; h_l_s += 25)
 	{
-		essai.lambda = lambda;
-		for (max_iter = 25; max_iter <= 250; max_iter += 25)
+		essai.hidden_layer_size = h_l_s;
+		for (j = 0; j < 10; ++j)
 		{
 			trainX = X.head_rows(train_sample);
 			essai.A = &trainX;
-			essai.max_iter = max_iter;
 			field<mat> data = train_nn(&essai);
 			mat theta1 = data[0];
 			mat theta2 = data[1];
-
 
 			mat X_test = X.tail_rows(test_sample);
 			ucolvec result = predict(theta1, theta2, X_test);
@@ -61,7 +59,7 @@ int main() {
 				if (trainy(i, 0) == result[i])
 					++count_train;
 			}
-			cout << essai.lambda << "," << essai.max_iter << ","
+			cout << essai.hidden_layer_size << ","
 			     << (count * 1.0) / test_sample << ","
 			     << (count_train * 1.0) / train_sample << endl;
 		}
